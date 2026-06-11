@@ -1,8 +1,15 @@
 import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
+
 
 const API = 'http://localhost:8000'
 
-export default function AuthPage({ onLogin }) {
+export default function AuthPage() {
+  
+  const {login} = useAuth();
+  const navigate = useNavigate();
+
   const [view, setView] = useState('login')
   const [form, setForm] = useState({ email: '', password: '' })
   const [message, setMessage] = useState(null)
@@ -55,7 +62,8 @@ export default function AuthPage({ onLogin }) {
         setMessage({ text: data.detail || 'Login failed', color: 'red' })
         return
       }
-      onLogin(data.access_token)
+      login(data.access_token)
+      navigate('/')
     } catch {
       setMessage({ text: 'Cannot reach backend.', color: 'red' })
     } finally {

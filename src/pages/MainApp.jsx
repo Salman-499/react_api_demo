@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
 
 const API = 'http://localhost:8000'
 
-export default function MainApp({ token, onLogout }) {
+
+
+export default function MainApp() {
+  
+  const { token, logout } = useAuth();
   const [user, setUser] = useState(null)
   const [applications, setApplications] = useState([])
   const [form, setForm] = useState({ name: '', email: '', years_experience: '' })
@@ -73,7 +78,7 @@ export default function MainApp({ token, onLogout }) {
         ) : (
           <span>Loading...</span>
         )}
-        <button onClick={onLogout} style={styles.logoutBtn}>Logout</button>
+        <button onClick={logout} style={styles.logoutBtn}>Logout</button>
       </div>
 
       <h3>Submit Application</h3>

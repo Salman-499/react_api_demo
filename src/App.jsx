@@ -1,34 +1,32 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import AuthPage from './pages/AuthPage'
 import MainApp from './pages/MainApp'
+import NotFoundPage from './pages/NotFoundPage'
 
-// Slides 104-170: Auth demo
-// To restore the original job application demo, swap this import:
-//   import Home from './pages/Home'
-//   export default function App() { return <Home /> }
+function ProtectedRoute({ children }) {
+  const { token } = useAuth()
+  return token ? children : <Navigate to="/login" replace />
+}
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('auth_token'))
-
-  if (!token) {
-    return (
-      <AuthPage
-        onLogin={(t) => {
-          localStorage.setItem('auth_token', t)
-          setToken(t)
-        }}
-      />
-    )
-  }
-
   return (
-    <MainApp
-      token={token}
-      onLogout={() => {
-        localStorage.removeItem('auth_token')
-        setToken(null)
-      }}
-    />
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<AuthPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <MainApp />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 

@@ -23,7 +23,7 @@ class TokenOut(BaseModel):
 class ApplicationCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     email: EmailStr
-    years_experience: int 
+    years_experience: int = Field(ge=0, le=50) 
     cover_letter: Optional[str] = None
 
 
