@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from db.models import User
+from db.models import Application, User
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:
@@ -40,3 +40,18 @@ def delete_user(db: Session, user_id: int) -> User | None:
     db.delete(user)
     db.commit()
     return user
+
+
+def create_application(db: Session, application: Application) -> Application:
+    db.add(application)
+    db.commit()
+    db.refresh(application)
+    return application
+
+
+def get_applications_by_user(db: Session, user_email: str) -> list[Application]:
+    return db.query(Application).filter(Application.submitted_by == user_email).all()
+
+
+def get_all_applications(db: Session) -> list[Application]:
+    return db.query(Application).all()

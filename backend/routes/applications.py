@@ -1,40 +1,37 @@
-from fastapi import APIRouter, Depends, File, Request, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile
+from sqlalchemy.orm import Session
 
+import db.repository as repository
 from auth.auth import get_current_user
-from db.models import User
-from schemas import ApplicationCreate
+from db.database import get_db
+from db.models import Application, User
+from schemas import ApplicationCreate, ApplicationOut
 
 router = APIRouter(tags=["Applications"])
 
 
-@router.post("/applications", status_code=201)
+@router.post("/applications", response_model=ApplicationOut, status_code=201)
 def submit_application(
     application: ApplicationCreate,
-    request: Request,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
-):
-    entry = {
-        "id": len(request.app.state.applications) + 1,
-        "name": application.name,
-        "email": application.email,
-        "years_experience": application.years_experience,
-        "cover_letter": application.cover_letter,
-        "submitted_by": current_user.email,
-        "status": "pending",
-    }
-    request.app.state.applications.append(entry)
-    return entry
+):  
+    entry = Application(
+        name=application.name,
+        email=application.email,
+        years_experience=application.years_experience,
+        cover_letter=application.cover_letter,
+        submitted_by=current_user.email,
+    )
+    return repository.create_application(db, entry)
 
 
-@router.get("/applications")
+@router.get("/applications", response_model=list[ApplicationOut])
 def list_my_applications(
-    request: Request,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return [
-        a for a in request.app.state.applications
-        if a["submitted_by"] == current_user.email
-    ]
+    return repository.get_applications_by_user(db, current_user.email)
 
 
 @router.post("/upload-resume")
