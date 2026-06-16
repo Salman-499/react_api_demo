@@ -10,3 +10,9 @@ python-multipart
 alembic
 pytest
 httpx
+langchain
+langchain-core
+langchain-openai
+langchain-community
+langchain-text-splitters
+faiss-cpu
