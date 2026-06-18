@@ -6,6 +6,7 @@ from db.database import Base, engine
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from config import get_settings
 from routes import admin, applications, auth, ask
 from sqlalchemy.exc import IntegrityError
 
@@ -47,9 +48,12 @@ async def integrity_error_handler(request: Request, exc: IntegrityError):
 
 
 
+_settings = get_settings()
+_origins = [o.strip() for o in _settings.allowed_origins.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
