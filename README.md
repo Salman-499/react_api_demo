@@ -1,16 +1,39 @@
-# React + Vite
+# React + FastAPI Teaching Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small full-stack app I built step by step while co-teaching the AI Python Bootcamp at WeCloudData (2026). Each commit adds one topic from the course, so students could follow along and compare their code at each stage.
 
-Currently, two official plugins are available:
+The app is a simple job-application tracker: users sign up, submit applications and ask questions about them in plain English.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it covers
 
-## React Compiler
+| Topic | Where |
+|---|---|
+| React components, routing, auth context | `src/` |
+| FastAPI routes and Pydantic schemas | `backend/routes/`, `backend/schemas.py` |
+| JWT login and protected routes | `backend/auth/`, `docs/JWT_FLOW.md` |
+| User roles and admin endpoints | `backend/routes/admin.py` |
+| SQLAlchemy models and CRUD | `backend/db/` |
+| File upload (résumés) | `POST /upload-resume` |
+| Error handling | `backend/main.py`, `docs/error-handling-notes.md` |
+| Tests | `backend/tests/` |
+| RAG with LangChain, FAISS and OpenAI over a user's applications | `backend/routes/ask.py`, `docs/langchain-rag-notes.md` |
+| Docker, Docker Compose and Nginx | `Dockerfile`, `docker-compose.yml`, `docs/docker-notes.md` |
+| Deploying to AWS | `docs/aws-notes.md` |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The `docs/` folder has the notes I wrote for each session.
 
-## Expanding the ESLint configuration
+## Running it
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# create backend/.env with SECRET_KEY and OPENAI_API_KEY (needed for /ask)
+docker-compose up --build       # frontend on http://localhost, API on :8000
+```
+
+For local development without Docker:
+
+```bash
+cd backend && pip install -r requirements.txt && uvicorn main:app --reload
+npm install && npm run dev      # from the repo root
+```
+
+The database is SQLite by default (`DATABASE_URL` changes it).
